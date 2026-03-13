@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { CardDeck } from './assets/CardDeck'
+import { CardDeck } from './CardDeck.js'
 
 function App() {
   const [gameDeck, setGameDeck] = useState(CardDeck);
@@ -12,40 +12,66 @@ function App() {
   // console.log(gameDeck);
 
 
-  // Get random card from the deck
-  const getRandomCard = () => {
-    const randomIndex = Math.floor(Math.random() * gameDeck.length);
-    const card = gameDeck[randomIndex];
-    setGameDeck(prevDeck => prevDeck.filter((_, index) => index !== randomIndex));
+  // Get random card from the deck and remove it from deck
+  const drawCardFromDeck = (currentDeck) => {
+    const randomIndex = Math.floor(Math.random() * currentDeck.length);
+    const card = currentDeck.splice(randomIndex,1)[0]
     return card;
   };
+
+  //score handler
+  // This function can be expanded to calculate scores based on Blackjack rules
+  function calculateScore(hand) {
+    let score = 0;
+    let aces = 0;
+    hand.forEach(card => {
+      if (typeof card.value === 'number') {
+        score += card.value;
+      } else if (card.value === 'J' || card.value === 'Q' || card.value === 'K') {
+        score += 10;
+      }else if (card.value === 'A') {
+        aces += 1;
+        score += 11; // Initially treat Ace as 11
+      }
+      while (score > 21 && aces > 0) {
+        score -= 10; // If score exceeds 21, treat Ace as 1
+        aces -= 1;
+      }
+    });
+    return score;
+  }
 
   // Deal initial hands
   const dealInitialHands = () => {
     console.log("NEW GAME STARTED");
-    console.log("Dealing initial hands...");
+    let currentDeck = [...CardDeck]
 
-    const playerInitialHand = [getRandomCard(), getRandomCard()];
-    // const dealerInitialHand = [{ suit: "♥", value: 5 }, { suit: "♠", value: 3 }];
-    const dealerInitialHand = [getRandomCard(), getRandomCard()];
-    setPlayerHand(playerInitialHand);
-    setDealerHand(dealerInitialHand);
+    console.log("Dealing starting cards...");
 
-    const calculatedPlayerScore = calculateScore(playerInitialHand);
-    const calculatedDealerScore = calculateScore(dealerInitialHand);
+    //cards for player
+    const playerCards = [drawCardFromDeck(currentDeck), drawCardFromDeck(currentDeck)];
+    //cards for dealer
+    const dealerCards = [drawCardFromDeck(currentDeck), drawCardFromDeck(currentDeck)];
 
-    console.log("Player Hand:", playerInitialHand);
-    console.log("Dealer Hand:", dealerInitialHand);
+    const calculatedPlayerScore = calculateScore(playerCards);
+    const calculatedDealerScore = calculateScore(dealerCards);
+
+    console.log("Player Hand:", playerCards);
+    console.log("Dealer Hand:", dealerCards);
     console.log("Player Score:", calculatedPlayerScore);
     console.log("Dealer Score:", calculatedDealerScore);
 
+    //save all changes
+    console.log("Saving changes...")
+    setPlayerHand(playerCards)
+    setDealerHand(dealerCards)
     setPlayerScore(calculatedPlayerScore);
     setDealerScore(calculatedDealerScore);
+    setGameDeck(currentDeck)
   };
 
   //Reset game
-  const resetGame = () => {
-    setGameDeck(CardDeck);
+  const resetRound = () => {
     setPlayerHand([]);
     setDealerHand([]);
     setDealerScore(0);
@@ -57,38 +83,35 @@ function App() {
 
   // Hit function for player
   function executeHit() {
-    if (gameDeck.length > 0) {
-      const newCard = getRandomCard();
-      const updatedHand = [...playerHand, newCard];
+    const currentGameDeck = [...gameDeck]
+    const playerCards = [...playerHand]
+    if (currentGameDeck.length > 0) {
+      const newCard = drawCardFromDeck(currentGameDeck);
+      const updatedHand = [...playerCards, newCard];
       const playerActualScore = calculateScore(updatedHand);
 
+      //early end
+      if (playerActualScore > 21) {
+        alert("Instantní prohra hřáč překočil 21!")
+        resetRound()
+      }
       setPlayerHand(updatedHand);
       setPlayerScore(playerActualScore);
-
-      if (playerActualScore > 21) {
-        console.log("Player's final hand:", updatedHand);
-        // alert(`Player busts! Player's score: ${playerActualScore}. Dealer wins.`);
-        gameOver(playerActualScore, dealerScore);
-      } else if (playerActualScore === 21) {
-        console.log("Player's final hand:", updatedHand);
-        alert(`Blackjack! Player wins with a score of ${playerActualScore}.`);
-        gameOver(playerActualScore, dealerScore);
-      }
-    } else {
-      alert("No more cards in the deck!");
-      resetGame();
+      setGameDeck(currentGameDeck)
     }
+
   }
 
   
   // Stand function for player
 
   function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async function executeStand() {
     console.log("Player stands. Dealer's turn to play.");
+    let currentGameDeck = [...gameDeck]
     setPlayerStand(true);
 
     let currentDealerHand = [...dealerHand];
@@ -96,7 +119,7 @@ function App() {
     while (calculateScore(currentDealerHand) < 17 && gameDeck.length > 0) {
       await wait(500); // počkej 500 ms
 
-      const newCard = getRandomCard();
+      const newCard = drawCardFromDeck(currentGameDeck);
       currentDealerHand = [...currentDealerHand, newCard];
 
       setDealerHand(currentDealerHand);
@@ -126,30 +149,9 @@ function App() {
     } else {
       alert(`It's a tie! Both player and dealer have a score of ${playerScore}.`);
     }
-    resetGame();
+    resetRound();
   }
 
-  //score handler
-  // This function can be expanded to calculate scores based on Blackjack rules
-  function calculateScore(hand) {
-    let score = 0;
-    let aces = 0;
-    hand.forEach(card => {
-      if (typeof card.value === 'number') {
-        score += card.value;
-      } else if (card.value === 'J' || card.value === 'Q' || card.value === 'K') {
-        score += 10;
-      }else if (card.value === 'A') {
-        aces += 1;
-        score += 11; // Initially treat Ace as 11
-      }
-      while (score > 21 && aces > 0) {
-        score -= 10; // If score exceeds 21, treat Ace as 1
-        aces -= 1;
-      }
-    });
-    return score;
-  }
 
   return (
     <div>
@@ -174,7 +176,7 @@ function App() {
       <button onClick={executeHit} id="hit-button">Hit</button>
       <button onClick={executeStand} id="stand-button">Stand</button>
       <p>Remaining Cards in Deck: {gameDeck.length}</p>
-      <button onClick={resetGame} id="reset-button">Reset Game</button>
+      <button onClick={resetRound} id="reset-button">Reset Game</button>
     </div>
   )
 }
