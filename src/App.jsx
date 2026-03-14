@@ -7,8 +7,10 @@ function App() {
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
   const [playerScore, setPlayerScore] = useState(0);
-  const [dealerScore, setDealerScore] = useState(0);
+  //const [dealerScore, setDealerScore] = useState(0);
   const [playerStand, setPlayerStand] = useState(false);
+  const [gameoverMessage,setGameOverMessage] = useState("");
+  const [disableHitBtn,setDisableHitBtn] = useState(false);
   // console.log(gameDeck);
 
 
@@ -56,8 +58,8 @@ function App() {
     const calculatedPlayerScore = calculateScore(playerCards);
     const calculatedDealerScore = calculateScore(dealerCards);
 
-    console.log("Player Hand:", playerCards);
     console.log("Dealer Hand:", dealerCards);
+    console.log("Player Hand:", playerCards);
     console.log("Player Score:", calculatedPlayerScore);
     console.log("Dealer Score:", calculatedDealerScore);
 
@@ -74,9 +76,11 @@ function App() {
   const resetRound = () => {
     setPlayerHand([]);
     setDealerHand([]);
-    setDealerScore(0);
+    //setDealerScore(0);
     setPlayerScore(0);
     setPlayerStand(false);
+    setGameOverMessage("")
+    setDisableHitBtn(false)
     console.log("Game has been reset.");
     dealInitialHands();
   };
@@ -92,8 +96,8 @@ function App() {
 
       //early end
       if (playerActualScore > 21) {
-        alert("Instantní prohra hřáč překočil 21!")
-        resetRound()
+        setGameOverMessage("Instantní prohra hřáč překočil 21! - Player BUST")
+        setDisableHitBtn(true)
       }
       setPlayerHand(updatedHand);
       setPlayerScore(playerActualScore);
@@ -101,7 +105,6 @@ function App() {
     }
 
   }
-
   
   // Stand function for player
 
@@ -115,8 +118,9 @@ function App() {
     setPlayerStand(true);
 
     let currentDealerHand = [...dealerHand];
+    let currentPlayerScore = calculateScore(playerHand)
 
-    while (calculateScore(currentDealerHand) < 17 && gameDeck.length > 0) {
+    while (calculateScore(currentDealerHand) < 17 && currentGameDeck.length > 0) {
       await wait(500); // počkej 500 ms
 
       const newCard = drawCardFromDeck(currentGameDeck);
@@ -130,26 +134,24 @@ function App() {
     console.log(`Dealer´s score is ${actualDealerScore}`);
     console.log("Dealer's final hand:", currentDealerHand);
     console.log("Player's final hand:", playerHand);
-    gameOver(actualDealerScore);
+    setGameDeck(currentGameDeck)
+    gameOver(currentPlayerScore,actualDealerScore);
   }
 
   function gameOver(playerScore, dealerScore) {
-    if (playerScore > 21) {
-      alert(`Player busts! Player's score: ${playerScore}. Dealer wins.`);
-    } else if (dealerScore > 21) {
-      alert(`Dealer busts! Dealer's score: ${dealerScore}. Player wins.`);
+    if (dealerScore > 21) {
+      setGameOverMessage("Player wins! Dealer score is higher than 21 - DEALER BUST")
     } else if (playerScore === 21) {
-      alert(`Blackjack! Player wins with a score of ${playerScore}.`);
+      setGameOverMessage(`Blackjack! Player wins with a score of ${playerScore}.`)
     } else if (dealerScore === 21) {
-      alert(`Dealer has Blackjack! Dealer wins with a score of ${dealerScore}.`);
+      setGameOverMessage(`Dealer has Blackjack! Dealer wins with a score of ${dealerScore}.`)
     } else if (playerScore > dealerScore) {
-      alert(`Player wins with a score of ${playerScore} against dealer's ${dealerScore}.`);
+      setGameOverMessage(`Player wins! With a score of ${playerScore} against dealer's ${dealerScore}.`)
     } else if (dealerScore > playerScore) {
-      alert(`Dealer wins with a score of ${dealerScore} against player's ${playerScore}.`);
+      setGameOverMessage(`Dealer wins with a score of ${dealerScore} against player's ${playerScore}.`)
     } else {
-      alert(`It's a tie! Both player and dealer have a score of ${playerScore}.`);
+      setGameOverMessage(`It's a tie! Player have score:${playerScore} and dealer score: ${dealerScore}.`)
     }
-    resetRound();
   }
 
 
@@ -173,10 +175,19 @@ function App() {
           <li key={index}>{card.value} of {card.suit}</li>
         ))}
       </ul>
-      <button onClick={executeHit} id="hit-button">Hit</button>
+      <button onClick={executeHit} id="hit-button" disabled={disableHitBtn}>Hit</button>
       <button onClick={executeStand} id="stand-button">Stand</button>
       <p>Remaining Cards in Deck: {gameDeck.length}</p>
       <button onClick={resetRound} id="reset-button">Reset Game</button>
+      {gameoverMessage !== "" &&(
+      <div className="popup-overlay">
+        <div className="popup-content">
+          <h2>Konec hry!</h2>
+          <p>{gameoverMessage}</p>
+          <button onClick={resetRound}>Začít novou hru</button>
+        </div>
+      </div>
+      )}
     </div>
   )
 }
