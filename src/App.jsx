@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import {useState} from 'react'
 import './App.css'
-import { CardDeck } from './CardDeck.js'
+import {CardDeck} from './CardDeck.js'
 
 function App() {
   const [gameDeck, setGameDeck] = useState(CardDeck);
@@ -17,8 +17,7 @@ function App() {
   // Get random card from the deck and remove it from deck
   const drawCardFromDeck = (currentDeck) => {
     const randomIndex = Math.floor(Math.random() * currentDeck.length);
-    const card = currentDeck.splice(randomIndex,1)[0]
-    return card;
+    return currentDeck.splice(randomIndex, 1)[0];
   };
 
   //score handler
@@ -68,7 +67,7 @@ function App() {
     setPlayerHand(playerCards)
     setDealerHand(dealerCards)
     setPlayerScore(calculatedPlayerScore);
-    setDealerScore(calculatedDealerScore);
+    //setDealerScore(calculatedDealerScore);
     setGameDeck(currentDeck)
   };
 
@@ -130,7 +129,7 @@ function App() {
     }
     
     const actualDealerScore = calculateScore(currentDealerHand);
-    setDealerScore(actualDealerScore);
+    //setDealerScore(actualDealerScore);
     console.log(`Dealer´s score is ${actualDealerScore}`);
     console.log("Dealer's final hand:", currentDealerHand);
     console.log("Player's final hand:", playerHand);
