@@ -4,13 +4,13 @@ This small web aplication simulates blackjack with basic moves: hit or stand
 ## Setup
 `
 git clone [https://github.com](https://github.com/Jakub-Mat/Blackjack.git)
-`
+`  
 `
 cd projekt
-`
+`  
 `
 npm install
-`
+`  
 `
 npm run dev
 `
