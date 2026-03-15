@@ -19,10 +19,10 @@ npm run dev
 This repo was made to learn basics of Vite and React
 
 ## TODOs
-I would like to add functionality to use cards from deck for more rounds.
-I would like to add some currency which can be gathered after win and add beting mechanics
-I would like to update the overall GUI
+I would like to add functionality to use cards from deck for more rounds.  
+I would like to add some currency which can be gathered after win and add beting mechanics  
+I would like to update the overall GUI.  
 
 # TechStack
-Frontend: React (newest version), Vite.
+Frontend: React (newest version), Vite.  
 Styling: Materil UI
