@@ -1,0 +1,55 @@
+#root {
+    max-width: 1280px;
+    margin: 0;
+    text-align: center;
+}
+
+h3 {
+    font-size: 1.5em;
+    margin: 10px 0 0 0;
+}
+
+h4 {
+    font-size: 1.2em;
+    margin: 0;
+}
+
+#stand-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#stand-button:hover {
+    background-color: #922323;
+}
+
+#reset-button {
+    background-color: #2196F3;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+#reset-button:hover {
+    background-color: #1976D2;
+}
+
+#hit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#hit-button:hover {
+    background-color: #337736;
+}
