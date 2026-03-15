@@ -1,12 +1,23 @@
-# React + Vite
+# Small blackjack web aplication
+This small web aplication simulates blackjack with basic moves: hit or stand
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Setup
+In Bash
+`
+git clone [https://github.com](https://github.com/Jakub-Mat/Blackjack.git)
+cd projekt
+npm install
+npm run dev
+`
 
-Currently, two official plugins are available:
+## Purpose
+This repo was made to learn basics of Vite and React
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## TODOs
+I would like to add functionality to use cards from deck for more rounds.
+I would like to add some currency which can be gathered after win and add beting mechanics
+I would like to update the overall GUI
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# TechStack
+Frontend: React (newest version), Vite.
+Styling: Materil UI
